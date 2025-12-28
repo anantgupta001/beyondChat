@@ -12,9 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->longText('content');
+            $table->string('source_url')->unique();
             $table->string('source')->default('original');
 
-            // Phase 2 ke liye
+            // Phase 2
             $table->longText('enhanced_content')->nullable();
             $table->boolean('phase2_done')->default(false);
 
@@ -27,3 +28,5 @@ return new class extends Migration
         Schema::dropIfExists('articles');
     }
 };
+
+
