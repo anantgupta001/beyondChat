@@ -4,10 +4,32 @@ import { Readability } from "@mozilla/readability";
 
 export async function enhance(content, competitorContents, competitorLinks) {
   try {
-    const { data } = await axios.get(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      timeout: 10000
-    });
+    const { data } = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama3-70b-8192",
+        messages: [
+          {
+            role: "user",
+            content: `Enhance the following article content with competitor information:
+            Article Content:
+            ${content}
+
+            Competitor Contents:
+            ${competitorContents.join("\n\n")}
+
+            Competitor Links:
+            ${competitorLinks.join("\n")}`
+          }
+        ]
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
     const dom = new JSDOM(data, { url });
     const reader = new Readability(dom.window.document);
